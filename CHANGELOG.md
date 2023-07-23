@@ -1,2 +1,3 @@
 ## Unreleased
-- Doc rewrite and package rename from craftx
+- Initial release
+- Package rename from craftx
