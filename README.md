@@ -43,8 +43,10 @@ const airsync = require("airsync");
 ```
 
 # Introduction
+AirSync is a powerful javascript library that you can use when using `async`.
 
-airsync is a powerful javaScript library that let you craft or call asynchronous functions with single await at the end. This library comes with two built-in functionalities that covers all the basis:
+Consider this function:
+
 
 1. When you create a JSON, you are guaranteed to have all the fields resolved instead of pending promises.
 2. When you access function parameter, you are guaranteed to have all the parameters resolved instead of pending promises.
