@@ -6,10 +6,13 @@
 
 <p align="center">
   <a aria-label="NPM version" href="https://www.npmjs.com/package/airsync">
-    <img alt="" src="https://img.shields.io/npm/v/airsync.svg?style=for-the-badge&labelColor=000000&">
+    <img alt="" src="https://img.shields.io/npm/v/airsync.svg?style=ffor-the-badge&labelColor=000000&">
+  </a>
+  <a aria-label="Tests" href="https://github.com/abumq/airsync/actions/workflows/run-tests.yml">
+    <img alt="" src="https://github.com/abumq/airsync/actions/workflows/run-tests.yml/badge.svg">
   </a>
   <a aria-label="License" href="https://github.com/abumq/airsync/blob/main/LICENSE">
-    <img alt="" src="https://img.shields.io/npm/l/airsync?style=for-the-badge&labelColor=000000">
+    <img alt="" src="https://img.shields.io/npm/l/airsync?style=ffor-the-badge&labelColor=000000">
   </a>
 </p>
 
@@ -157,32 +160,6 @@ Now if you pass in JSON with unresolved promises to the function, it would be co
 
 # Misc Features
 
-## Get Object Value
-
-If you have a function that returns an object, and you want to grab just one specific value from the object, you can use built-in `get` function to do that.
-
-```javascript
-const { get } = require("airsync");
-
-const getProfile = async (uid) => ({
-  name: "John",
-  age: 45,
-  father: {
-    name: "Peter",
-  },
-});
-
-(async () => {
-  console.log(await get(getProfile(), "father.name")); // output: Peter
-  console.log(await get(getProfile(), "mother.name", "Steph")); // output: Steph
-  console.log(await get(getProfile(), "brother.name")); // output: undefined
-})();
-```
-
-Synopsis: `get(object, path, defaultValue, options)`. The `options` is passed through to `fn()` internally.
-
-**NOTE:** This function uses [lodash.get](https://www.npmjs.com/package/lodash.get) to resolve the JSON path.
-
 ## Options
 
 If the first parameter is an object for the `fn()`, that object is used for setting up the options.
@@ -252,6 +229,39 @@ module.exports = fnExport({
 ```
 
 Alternatively, you can do it when importing like in example of `/examples/json.js`. Doing it multiple times does not harm.
+
+## Get Object Value
+
+If you have a function that returns an object, and you want to grab just one specific value from the object, you can use following `get` function to do that.
+
+This function used to be part of library. Since `1.0.4`, the `get()` function is removed (see CHANGELOG). However, if you need it, you can add it as utility in your project.
+
+```js
+const lodashGet = require('lodash.get');
+
+// get value from the object using lodash.get
+// when object is resolved
+const get = (objOrPromise, path, defaultVal, options = {}) => fn(o => lodashGet(o, path) || defaultVal, options)(objOrPromise)
+```
+
+You need to add dependency to [lodash.get](https://www.npmjs.com/package/lodash.get) if you need it
+
+```javascript
+
+const getProfile = async (uid) => ({
+  name: "John",
+  age: 45,
+  father: {
+    name: "Peter",
+  },
+});
+
+(async () => {
+  console.log(await get(getProfile(), "father.name")); // output: Peter
+  console.log(await get(getProfile(), "mother.name", "Steph")); // output: Steph
+  console.log(await get(getProfile(), "brother.name")); // output: undefined
+})();
+```
 
 # License
 

@@ -1,4 +1,4 @@
-const snooze = ms => new Promise(resolve => setTimeout(resolve, ms));
+const snooze = ms => new Promise(resolve => setTimeout(resolve, ms))
 
 const queryUserInfo = async () => {
   //await snooze(800);
@@ -53,4 +53,5 @@ module.exports = {
   thisFnThrows,
   queryConfig,
   simple,
+  snooze,
 };

@@ -8,9 +8,6 @@
     "dist/fn.js",
     "dist/json.js"
   ],
-  "dependencies": {
-    "lodash.get": "^4.4.2"
-  },
   "devDependencies": {
     "babel-minify": "^0.5.1",
     "mocha": "^10.2.0",

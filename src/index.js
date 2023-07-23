@@ -14,7 +14,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-const get = require('lodash.get');
 const { fn, exec, fnExport } = require('./fn');
 const { json } = require('./json');
 
@@ -30,8 +29,3 @@ module.exports.fnjson = (theSyncFunc) => fn(async (obj, ...anythingElse) => theS
 // name exports from json
 module.exports.json = json;
 
-// get value from the object using lodash.get
-// when object is resolved
-module.exports.get = (objOrPromise, path, defaultVal, options = {}) =>
-  fn(o => get(o, path) || defaultVal, options)
-  (objOrPromise);
