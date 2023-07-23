@@ -1,17 +1,20 @@
 const assert = require('assert');
-const airsync = require('../src');
+const lodashGet = require('lodash.get');
+const { fn } = require('../src');
 
-const { queryPerson, getResponse } = require('./utils');
+const { getResponse } = require('./utils');
+
+const get = (objOrPromise, path, defaultVal, options = {}) => fn(o => lodashGet(o, path) || defaultVal, options)(objOrPromise)
 
 describe('Test get', () => {
   it('Get resolves to correct value', async () => {
-    const r = await airsync.get(getResponse(), 'status')
+    const r = await get(getResponse(), 'status')
     assert.equal(r, 200)
   });
 
   it('Exception handled correctly', async () => {
     try {
-      const r = await airsync.get(getResponse(true), 'status');
+      const r = await get(getResponse(true), 'status');
       assert.fail()
     } catch (e) {
       assert.equal(e.message, 'Thrown intentionally')
@@ -19,14 +22,14 @@ describe('Test get', () => {
   });
 
   it('Default values are resolved correctly', async () => {
-    const r = await airsync.get(getResponse(), 'non-existant', 500)
+    const r = await get(getResponse(), 'non-existant', 500)
     assert.equal(r, 500)
   });
 
   it('get options work correctly', async () => {
     const timerResult = { start: false, end: false };
 
-    const r = await airsync.get(getResponse(), 'status', undefined, {
+    const r = await get(getResponse(), 'status', undefined, {
       startTime: () => timerResult.start = true,
       endTime: () => timerResult.end = true,
     })
