@@ -1,4 +1,6 @@
 ## Unreleased
+
+## 1.0.4
 - Removed `get()` and added it to README to remove dependency from `lodash.get`
 
 ## 1.0.3
