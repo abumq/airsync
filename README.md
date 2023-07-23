@@ -1,6 +1,6 @@
 <p align="center">
     <a href="https://github.com/abumq/airsync">
-      <img width="190px" src="https://github.com/abumq/airsync/raw/main/assets/logo.png?" />
+      <img width="190px" src="https://github.com/abumq/airsync/raw/main/assets/logo.png?v2" />
     </a>
 </p>
 
