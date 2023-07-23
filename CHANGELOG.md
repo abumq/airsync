@@ -1,4 +1,6 @@
 ## Unreleased
+
+## 1.0.5
 - Logo update no API change
 
 ## 1.0.4
