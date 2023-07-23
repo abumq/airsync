@@ -1,0 +1,12 @@
+{
+  "name": "airsync",
+  "version": "0.0.1",
+  "description": "Empower asyncronous calls",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/abumq/airsync.git"
+  },
+  "author": "Majid Q. <abumusamq@gmail.com>",
+  "license": "Apache-2.0"
+}
