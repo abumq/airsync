@@ -2,7 +2,6 @@
     <a href="https://github.com/abumq/airsync">
       <img width="190px" src="https://github.com/abumq/airsync/raw/main/assets/logo.png?" />
     </a>
-    <p align="center">Empower asyncronous calls</p>
 </p>
 
 <p align="center">
@@ -45,147 +44,90 @@ const airsync = require("airsync");
 # Introduction
 AirSync is a powerful javascript library that you can use when using `async`.
 
-Consider this function:
+The easiest way to see the power of this library is to checkout [`performance.js`](https://github.com/abumq/airsync/blob/main/examples/performance.js) file.
 
+AirSync helps you:
 
-1. When you create a JSON, you are guaranteed to have all the fields resolved instead of pending promises.
-2. When you access function parameter, you are guaranteed to have all the parameters resolved instead of pending promises.
+ * Create JSON from promises without extracting functions or multiple await
+ * Convert your existing functions that take promises as parameters, you do not need to wait for promises to fulfil in order to pass them to the function. You can just pass them in as is.
 
-## 1. JSON
+The best part is that AirSync makes your code readable while using full power of [non-blocking event based I/O](https://developers.redhat.com/blog/2016/08/16/why-should-i-use-node-js-the-non-blocking-event-io-framework/) that Node.js is known for.
 
-### TL;DR
-
-What do you think output would be?
-
+# 1. JSON
+## Problem
 ```javascript
 const calcAge = async () => 65; // note the async
 
-(async () => {
-  console.log({
-    age: calcAge(),
-  });
-})();
+// this will not result in correct `age`
+const props = {
+  age: calcAge(),
+}
 
 // output:
 // {age: Promise}
 // Promise {<fulfilled>: undefined}
 ```
+## Existing Solution
+Either you can write await for each one of the promises, like:
+```javascript
+const props = {
+  age: await calcAge(),
+}
+```
 
-How do we solve this problem? Either by adding a lot of awaits for each promise, or just by simply:
+### Problems with this solution
 
+ * This is going to blow out very soon, meaning, as you introduce new calls or fields in this JSON, it will become very unreadable
+ * The biggest problem with this is performance. This is becoming blocking calls as we are going to await for the results from functions
+
+that will blow out very soon as you scale up.
+
+## AirSync Solution
+
+You can use AirSync to solve this issue
 ```javascript
 const { json } = require("airsync");
 
-const calcAge = async () => 65;
-
-(async () => {
-  console.log(
-    await json({
-      // notice using airsync' json() function
-      age: calcAge(),
-    })
-  );
-})();
-
-// output:
-// {age: 65}
+const props = json({
+  age: calcAge(),
+})
 ```
 
 Try it on [RunKit](https://npm.runkit.com/airsync)
 
-<details>
-  <summary>Read in detail</summary>
-
-### The Problem
-
-Let's say you need to create a JSON
-
-```javascript
-{
-  id: 1,
-  name: 'John F. Kennedy',
-  age: 45,
-}
-```
-
-This is good as long as you are not using promises, but if you want to use promises like:
-
-```javascript
-const queryName = () => Promise.resolve('John F. Kennedy');
-const calculateAge = () => Promise.resolve(45);
-
-{
-  id: 1,
-  name: queryName(),
-  age: calculateAge(),
-}
-```
-
-this will result potentially unresolved promises.
-
-and if you do this:
-
-```javascript
-{
-  id: 1,
-  name: await queryName(),
-  age: await calculateAge(),
-}
-```
-
-the calls are now sequential and defeats the purpose of [non-blocking event based I/O](https://developers.redhat.com/blog/2016/08/16/why-should-i-use-node-js-the-non-blocking-event-io-framework/) that Node.js is known for.
-
-### Solution
-
-To handle this situation without wrapping the promise resolution in a separate function, you can use this utility package to handle this situation
-
-```javascript
-const { json } = require("airsync");
-
-await json({
-  id: 1,
-  name: queryName(),
-  age: calculateAge(),
-});
-```
-
-This will resolve only after all the promises are resolved. Resulting in:
-
-```javascript
-{
-  id: 1,
-  name: 'John F Kennedy',
-  age: 45,
-}
-```
-
-</details>
-
-### Max depth
+## Max depth
 
 Default object depth supported by airsync is `64`.
 
-## 2. Async Function
-
-### TL;DR
-
-What do you think output would be?
-
+# 2. Async Function
+## Problem
 ```javascript
 const getAge = async () => 123;
 const getDetail = async (age) => `The age is ${age}`;
+```
 
-(async () => {
-  const result = await getDetail(getAge());
-  console.log(result);
-})();
+```javascript
+await getDetail(getAge());
 
 // output:
 // The age is [object Promise]
 // Promise {<fulfilled>: undefined}
 ```
 
-How do we solve this problem?
+## Existing Solution
+Either you can wait for the `getAge()` to be resolved first and then pass it to `getDetail()` like this:
+```javascript
+await getDetail(await getAge());
+```
+
+or you can extract out it to variable.
+
+### Problems with this solution
+
+ * This is going to blow out very soon, meaning, as you introduce new calls, it will become very unreadable
+ * The biggest problem with this is performance. This is becoming blocking calls as we are going to await for the results from functions
+
+## AirSync Solution
 
 ```javascript
 const { fn } = require("airsync"); // or you can import using const airsync = require('airsync') and use airsync.fn(...)
@@ -193,88 +135,12 @@ const { fn } = require("airsync"); // or you can import using const airsync = re
 const getAge = async () => 123;
 const getDetail = fn(async (age) => `The age is ${age}`); // notice the wrap around "fn"
 
-(async () => {
-  const result = await getDetail(getAge());
-  console.log(result);
-})();
+const result = await getDetail(getAge());
 ```
 
 Try it on [RunKit](https://npm.runkit.com/airsync)
 
-<details>
-  <summary>Read in detail</summary>
-
-### Problem
-
-There are times when you want to use promise values without awaiting (i.e, automatically once the promise is fulfilled). This utility helps you achieve this goal using native promise mechanism.
-
-We will walk you through an example and provide explanation where necessary.
-
-Let's say you have various utility functions to query the database.
-
-```javascript
-const queryCompanyInfo_ = async () => ({
-  username: "@amrayn",
-});
-
-const queryAccountInfo_ = async (company) => ({
-  company,
-  created: "19-02-2020",
-});
-```
-
-Notice the `queryAccountInfo_` takes `company` parameter (promise) that will be provided by `queryCompanyInfo_`. But you don't know whether this promise is fulfilled or not. If you use `Promise.all` directly (without this library) you won't be able to provide this (resolved) company object to `queryAccountInfo_`.
-
-```javascript
-Promise.all([
-  queryCompanyInfo_(),
-  queryAccountInfo_(), // notice we cannot provide "company" here
-]).then(([userInfo, accountInfo]) => {
-  console.log(accountInfo);
-});
-```
-
-A possible solution is to await for the promises first:
-
-```javascript
-const companyInfo = await queryCompanyInfo_();
-const accountInfo = queryAccountInfo_(companyInfo);
-```
-
-This has 2 basic problems.
-
-1. You're not making use of parallelism here. Which defeats the purpose of Promises to some extent.
-2. The code is very soon going to be messy and unreadable.
-
-### Solution
-
-airsync allows you to "craft" a function that will help you achieve your goal without worrying about any of the above problem.
-
-```javascript
-const { fn } = require("airsync"); // or you can import { fn }
-
-const queryCompanyInfo = fn(queryCompanyInfo_);
-const queryAccountInfo = fn(queryAccountInfo_);
-
-const finalJson = await queryAccountInfo(queryCompanyInfo());
-```
-
-This will result in:
-
-```javascript
-{
-  company: {
-    username: '@amrayn',
-  },
-  created: '19-02-2020',
-}
-```
-
-</details>
-
-## Misc
-
-### Convert param based function
+## Function with JSON
 `fn()` is good when the function takes normal parameters, e.g, `myfn(param1, param2)` but this will not work if we have json based parameters, e.g, `myfn({ param1: 1, param2: Promise.resolve(2) })`
 
 For this `fnjson()` was added.
@@ -289,7 +155,9 @@ const getNameSync = fnjson(getName);
 
 Now if you pass in JSON with unresolved promises to the function, it would be correctly passed in to `getName` function
 
-### Get Object Value
+# Misc Features
+
+## Get Object Value
 
 If you have a function that returns an object, and you want to grab just one specific value from the object, you can use built-in `get` function to do that.
 
@@ -315,7 +183,7 @@ Synopsis: `get(object, path, defaultValue, options)`. The `options` is passed th
 
 **NOTE:** This function uses [lodash.get](https://www.npmjs.com/package/lodash.get) to resolve the JSON path.
 
-### Options
+## Options
 
 If the first parameter is an object for the `fn()`, that object is used for setting up the options.
 
@@ -353,7 +221,7 @@ Following are the possible options
 | `endTime`     | Function for [server timing](https://www.w3.org/TR/server-timing/) - `(name) => {}` - the `name` is passed back to this function                                            |
 | `debug`       | Boolean value to tell airsync whether debug logging is enabled or not. It will use a global `logger.debug()` object. If no such object exists, it will use `console.debug()` |
 
-### Bulk Export (Advanced)
+## Bulk Export (Advanced)
 
 Converting existing exports to crafted functions is easy, either using `fn` for each function which can be cumbersome depending on number of functions; or you can simply convert the whole object using a helper function `fnExport`.
 
