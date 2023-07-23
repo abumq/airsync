@@ -1,12 +1,47 @@
 {
   "name": "airsync",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Empower asyncronous calls",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "files": [
+    "dist/index.js",
+    "dist/fn.js",
+    "dist/json.js"
+  ],
+  "dependencies": {
+    "lodash.get": "^4.4.2"
+  },
+  "devDependencies": {
+    "babel-minify": "^0.5.1",
+    "mocha": "^10.2.0",
+    "rimraf": "^3.0.2"
+  },
+  "scripts": {
+    "test": "mocha tests",
+    "tdd": "mocha tests --watch",
+    "build": "rimraf dist && mkdir dist && minify src -d dist",
+    "prepublish": "npm run build"
+  },
+  "keywords": [
+    "promise",
+    "async",
+    "resolved",
+    "util",
+    "utility",
+    "json",
+    "async-json"
+  ],
+  "author": "Majid Q. <abumusamq@gmail.com>",
+  "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/abumq/airsync.git"
   },
-  "author": "Majid Q. <abumusamq@gmail.com>",
-  "license": "Apache-2.0"
+  "publishConfig": {
+    "access": "public"
+  },
+  "bugs": {
+    "url": "https://github.com/abumq/airsync/issues"
+  },
+  "homepage": "https://github.com/abumq/airsync#readme"
 }

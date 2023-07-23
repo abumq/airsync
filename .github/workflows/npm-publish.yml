@@ -1,0 +1,43 @@
+name: Publish to NPM
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - run: yarn
+      - run: yarn test
+
+  publish-npm:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          registry-url: https://registry.npmjs.org/
+      - name: Git configuration
+        run: |
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "GitHub Actions"
+      - run: yarn
+      - run: npm version patch
+      - run: npm publish --patch
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
+      - name: Update change log
+        run: |
+          sed -i "s/## Unreleased/## Unreleased\n\n## $(npm info airsync version)/g" CHANGELOG.md
+      - name: Commit the update
+        run: |
+          git add .
+          git commit --amend --no-edit
+          git push origin HEAD:master
