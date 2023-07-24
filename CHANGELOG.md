@@ -1,5 +1,5 @@
 ## Unreleased
-- Moved spread functionality to `json`
+- Merged `jjson` and `json` functions
 
 ## 1.0.6
 - Introduced `jjson` and `spread` for producing spreaded JSON objects
