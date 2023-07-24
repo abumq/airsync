@@ -57,7 +57,7 @@ AirSync helps you:
 The best part is that AirSync makes your code readable while using full power of [non-blocking event based I/O](https://developers.redhat.com/blog/2016/08/16/why-should-i-use-node-js-the-non-blocking-event-io-framework/) that Node.js is known for.
 
 # 1. JSON
-## Problem
+### Problem
 ```javascript
 const calcAge = async () => 65; // note the async
 
@@ -70,7 +70,7 @@ const props = {
 // {age: Promise}
 // Promise {<fulfilled>: undefined}
 ```
-## Existing Solution
+### Existing Solution
 Either you can write await for each one of the promises, like:
 ```javascript
 const props = {
@@ -78,14 +78,12 @@ const props = {
 }
 ```
 
-### Problems with this solution
+#### Problems with this solution
 
  * This is going to blow out very soon, meaning, as you introduce new calls or fields in this JSON, it will become very unreadable
  * The biggest problem with this is performance. This is becoming blocking calls as we are going to await for the results from functions
 
-that will blow out very soon as you scale up.
-
-## AirSync Solution
+### AirSync Solution
 
 You can use AirSync to solve this issue
 ```javascript
@@ -95,6 +93,63 @@ const props = json({
   age: calcAge(),
 })
 ```
+
+## Spread Operator
+### Problem
+Lets say you have a code
+
+```js
+const encodeKey = async () => {
+  return { keyId: 123 }
+}
+```
+
+and you want to create JSON like:
+```js
+{
+  keyId: 123
+}
+```
+
+the following **WILL NOT** create desired result
+```js
+const result = await json({
+  keyId: encodeKey(),
+})
+```
+
+what about this?
+
+```js
+const result = await json({
+  ...encodeKey(),
+})
+```
+This is also not going to work because `encodeKey()` is an async function.
+
+### Existing Solution
+We have a solution
+```js
+const result = await json({
+  ...await encodeKey(),
+})
+```
+
+#### Problems with this solution
+All of a sudden, our code has to wait for `encodeKey` to finish, and if the JSON being produced is long with a lot of `await` like this, this is going to be very slow.
+
+### AirSync Solution
+Luckily, we have `jjson()` (notice extra `j`) and `spread()`
+
+```js
+const { jjson, spread } = require('airsync');
+
+const result = await jjson({
+  [spread()]: encodeKey(),
+})
+```
+
+This will result in correct JSON + this code will run asynchronously no matter how many objects are "spreaded".
 
 Try it on [RunKit](https://npm.runkit.com/airsync)
 

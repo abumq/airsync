@@ -16,6 +16,7 @@
 
 const { fn, exec, fnExport } = require('./fn');
 const { json } = require('./json');
+const { jjson, spread } = require('./spread+jjson');
 
 // default export
 module.exports = fn;
@@ -28,3 +29,7 @@ module.exports.fnjson = (theSyncFunc) => fn(async (obj, ...anythingElse) => theS
 
 // name exports from json
 module.exports.json = json;
+
+// named export from spread+jjson
+module.exports.jjson = jjson;
+module.exports.spread = spread;

@@ -14,35 +14,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// ATTENTION!!
-// jjson and spread are still under development
-// they should not be used in production
-//
-// Developer note: We need to ensure there isn't any race
-// condition with COUNTER global variable
-// for spread()
-
 const { json } = require('./json');
 
-let COUNTER = 0;
+COUNTER = 0;
 const KEY_NAME = '__airsync_jjson';
-
-if (typeof global === 'undefined') {
-  if (typeof window === 'undefined') {
-    throw new Error('spread() only support in browser or node')
-  }
-  global = window;
-}
 
 /**
  * Flags the field to be spreaded in resulting JSON.
- * 
- * **NOTE: This is not production-ready just yet**
  */
-const spread = () => {
-  COUNTER += 1;
-  return KEY_NAME + COUNTER;
-}
+const spread = () => KEY_NAME + COUNTER++;;
 
 /**
  * Create special JSON with spreaded values instead of keyed values.
@@ -80,10 +60,10 @@ const spread = () => {
  * @returns Resulting JSON
  */
 const jjson = async (val, opts = {}) => {
-  const result = await json(val, opts)
+  const result = await json(val, opts);
   for (const k in result) {
     if (k.indexOf(KEY_NAME) === 0) {
-      Object.assign(result, result[k])
+      Object.assign(result, result[k]);
       delete result[k];
     }
   }

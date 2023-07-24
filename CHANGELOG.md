@@ -1,4 +1,5 @@
 ## Unreleased
+- Introduced `jjson` and `spread` for producing spreaded JSON objects
 
 ## 1.0.5
 - Logo update no API change
