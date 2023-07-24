@@ -44,6 +44,9 @@ const NO_RESOLUTION_CLASS_LIST = [
   ...TYPED_ARRAY_NAMES,
 ];
 
+let SPREAD_COUNTER = 0;
+const SPREAD_KEY_NAME = '__airsync_special_key';
+
 // if [].from() is available use that otherwise use constructor
 const createArrInstance = (ArrayInstanceType, items) =>
   typeof ArrayInstanceType.from === 'function' ?
@@ -130,10 +133,18 @@ const createObject = (obj, depth, currentKey, opts = {}) => {
       if (opts.name && typeof opts.startTime === 'function') {
         opts.endTime(opts.name);
       }
-      return keys.reduce((accum, key, idx) => ({
-        ...accum,
-        [key]: values[idx],
-      }), {})
+      return keys.reduce((accum, key, idx) => {
+        if (key.indexOf(SPREAD_KEY_NAME) === 0) {
+          return {
+            ...accum,
+            ...values[idx],
+          };
+        };
+        return {
+          ...accum,
+          [key]: values[idx],
+        };
+      }, {})
     })
     .catch(error => {
       if (opts.name && typeof opts.endTime === 'function') {
@@ -146,10 +157,41 @@ const createObject = (obj, depth, currentKey, opts = {}) => {
     })
   }
   return obj;
-}
+};
 
 /**
  * Create JSON from promises without extracting functions or multiple await
+ * 
+ * This can also create special JSON with spreaded values instead of keyed values.
+ * This function is used alongside {@link spread} function
+ * ```js
+ *   const props = jjson({
+ *     [spread()]: buildUserDetails(),
+ *   })
+ * ```
+ * 
+ * This will result in:
+ * ```
+ * {
+ *   id: 123,
+ *   username: 'abumq'
+ * }
+ * ```
+ * whereas if we were to use usual `json()`
+ * ```js
+ *   const props = json({
+ *     user: buildUserDetails(),
+ *   })
+ * ```
+ * that would result in 
+ * ```
+ * {
+ *   user: {
+ *     id: 123,
+ *     username: 'abumq'
+ *   }
+ * }
+ * ```
  * @param {*} val Object or Array
  * @param {*} opts AirSync options. See https://github.com/abumq/airsync/tree/main#options
  * @returns Resulting JSON
@@ -166,4 +208,10 @@ const json = (val, opts = {}) => {
   return createObject(val, 1, '<root>', opts);
 };
 
+/**
+ * Flags the field to be spreaded in resulting JSON.
+ */
+const spread = () => SPREAD_KEY_NAME + ++SPREAD_COUNTER;
+
 module.exports.json = json;
+module.exports.spread = spread;

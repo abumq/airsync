@@ -139,12 +139,12 @@ const result = await json({
 All of a sudden, our code has to wait for `encodeKey` to finish, and if the JSON being produced is long with a lot of `await` like this, this is going to be very slow.
 
 ### AirSync Solution
-Luckily, we have `jjson()` (notice extra `j`) and `spread()`
+Luckily, we have `spread()`
 
 ```js
-const { jjson, spread } = require('airsync');
+const { spread, json } = require('airsync');
 
-const result = await jjson({
+const result = await json({
   [spread()]: encodeKey(),
 })
 ```
