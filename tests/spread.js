@@ -1,9 +1,15 @@
 const assert = require('assert');
 const airsync = require('../src');
-
 const { queryPerson, queryProfile } = require('./utils');
 
-describe('When we have JSON', async () => {
+const RACE_NUMBERS = 100;
+
+const logger = {
+  startTime: console.log,
+  endTime: console.log,
+}
+
+describe('When we have JSON with spread()', async () => {
   
   const buildProps = () => {
 
@@ -19,6 +25,7 @@ describe('When we have JSON', async () => {
   }
 
   const props = await buildProps();
+  // console.log(props)
 
   it('the JSON correctly spreads the properties', () => {
     assert.equal(props.name, 'John');

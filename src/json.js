@@ -163,37 +163,9 @@ const createObject = (obj, depth, currentKey, opts = {}) => {
  * Create JSON from promises without extracting functions or multiple await
  * 
  * This can also create special JSON with spreaded values instead of keyed values.
- * This function is used alongside {@link spread} function
- * ```js
- *   const props = jjson({
- *     [spread()]: buildUserDetails(),
- *   })
- * ```
- * 
- * This will result in:
- * ```
- * {
- *   id: 123,
- *   username: 'abumq'
- * }
- * ```
- * whereas if we were to use usual `json()`
- * ```js
- *   const props = json({
- *     user: buildUserDetails(),
- *   })
- * ```
- * that would result in 
- * ```
- * {
- *   user: {
- *     id: 123,
- *     username: 'abumq'
- *   }
- * }
- * ```
+ * (see [spread operator](https://github.com/abumq/airsync#spread-operator))
  * @param {*} val Object or Array
- * @param {*} opts AirSync options. See https://github.com/abumq/airsync/tree/main#options
+ * @param {*} opts AirSync options. See [options](https://github.com/abumq/airsync#options)
  * @returns Resulting JSON
  */
 const json = (val, opts = {}) => {
