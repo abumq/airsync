@@ -148,7 +148,13 @@ const createObject = (obj, depth, currentKey, opts = {}) => {
   return obj;
 }
 
-function json(val, opts = {}) {
+/**
+ * Create JSON from promises without extracting functions or multiple await
+ * @param {*} val Object or Array
+ * @param {*} opts AirSync options. See https://github.com/abumq/airsync/tree/main#options
+ * @returns Resulting JSON
+ */
+const json = (val, opts = {}) => {
   if (!val || val === null || typeof val !== 'object') {
     return val;
   }

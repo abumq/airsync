@@ -28,4 +28,3 @@ module.exports.fnjson = (theSyncFunc) => fn(async (obj, ...anythingElse) => theS
 
 // name exports from json
 module.exports.json = json;
-

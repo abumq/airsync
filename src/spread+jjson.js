@@ -14,8 +14,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// ATTENTION!!
+// jjson and spread are still under development
+// they should not be used in production
+//
+// Developer note: We need to ensure there isn't any race
+// condition with COUNTER global variable
+// for spread()
+
 const { json } = require('./json');
 
+let COUNTER = 0;
 const KEY_NAME = '__airsync_jjson';
 
 if (typeof global === 'undefined') {
@@ -25,19 +34,57 @@ if (typeof global === 'undefined') {
   global = window;
 }
 
+/**
+ * Flags the field to be spreaded in resulting JSON.
+ * 
+ * **NOTE: This is not production-ready just yet**
+ */
 const spread = () => {
-  global[KEY_NAME] = global[KEY_NAME] || [];
-  const result = KEY_NAME + global[KEY_NAME].length;
-  global[KEY_NAME].push(result)
-  return result;
+  COUNTER += 1;
+  return KEY_NAME + COUNTER;
 }
 
-const jjson = async (obj, opts = {}) => {
-  const result = await json(obj, opts)
+/**
+ * Create special JSON with spreaded values instead of keyed values.
+ * This function is used alongside {@link spread} function
+ * ```js
+ *   const props = jjson({
+ *     [spread()]: buildUserDetails(),
+ *   })
+ * ```
+ * 
+ * This will result in:
+ * ```
+ * {
+ *   id: 123,
+ *   username: 'abumq'
+ * }
+ * ```
+ * whereas if we were to use usual `json()`
+ * ```js
+ *   const props = json({
+ *     user: buildUserDetails(),
+ *   })
+ * ```
+ * that would result in 
+ * ```
+ * {
+ *   user: {
+ *     id: 123,
+ *     username: 'abumq'
+ *   }
+ * }
+ * ```
+ * @param {*} val Object or Array
+ * @param {*} opts AirSync options. See https://github.com/abumq/airsync/tree/main#options
+ * @returns Resulting JSON
+ */
+const jjson = async (val, opts = {}) => {
+  const result = await json(val, opts)
   for (const k in result) {
     if (k.indexOf(KEY_NAME) === 0) {
-        Object.assign(result, result[k])
-        delete result[k];
+      Object.assign(result, result[k])
+      delete result[k];
     }
   }
   return result;
