@@ -65,6 +65,7 @@ const createArray = (arr, depth, currentKey, opts = {}) => {
   }
 
   const ArrayInstanceType = ARRAY_TYPES[arr.constructor.name] || Array;
+  console.log('the array type', opts.arr)
 
   if (opts.name && typeof opts.startTime === 'function') {
     opts.startTime(opts.name, opts.description);
@@ -115,6 +116,13 @@ const createObject = (obj, depth, currentKey, opts = {}) => {
     const constructorName = obj.constructor.name;
     if (NO_RESOLUTION_CLASS_LIST.some(f => f === constructorName)) {
       if (TYPED_ARRAY_NAMES.some(f => f === constructorName)) {
+        const result = createArray(obj, 1, currentKey, /*opts, */{
+          arr: currentKey === 'uint8ArrayItem' ? constructorName : undefined,
+        });
+        if (currentKey === 'uint8ArrayItem')
+          console.log('constructorName', constructorName, obj)
+
+        return result;
         return createArray(obj, 1, currentKey, opts);
       }
       return obj;
@@ -129,10 +137,30 @@ const createObject = (obj, depth, currentKey, opts = {}) => {
     return Promise.all(
       keys.map(key => createObject(obj[key], depth + 1, key))
     )
-    .then(values => {
+    .then(async values => {
       if (opts.name && typeof opts.startTime === 'function') {
         opts.endTime(opts.name);
       }
+      let finalResult = {};
+      let idx = 0;
+      for (let key of keys) {
+        const finalValue = await createObject(values[idx], 0, key)
+        if (key.indexOf(SPREAD_KEY_NAME) === 0) {
+          //Object.assign(finalResult, finalValue);
+          finalResult = {
+            ...finalResult,
+            ...finalValue,
+          };
+        } else {
+          //Object.assign(finalResult, { [key] : finalValue });
+          finalResult = {
+            ...finalResult,
+            [key]: finalValue,
+          };
+        }
+        idx++;
+      }
+      return finalResult;
       return keys.reduce((accum, key, idx) => {
         if (key.indexOf(SPREAD_KEY_NAME) === 0) {
           return {

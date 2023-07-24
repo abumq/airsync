@@ -6,16 +6,18 @@ const p = async v => v;
 describe('Typed arrays are resolved correctly', () => {
 
   describe('Uint8Array', async () => {
+    const uint8ArrayItem = new Uint8Array([21, 31]);
     const result = await airsync.json({
-      uint8Array: new Uint8Array([21, 31]),
+      uint8ArrayItem,
       promiseBasedUint8Array: (async () => new Uint8Array([21, 31]))(),
-      arr: {
-        simpl: new Uint8Array([21, 31]),
-      },
+    });
+
+    it('Type is correct', () => {
+      assert.equal(result.uint8ArrayItem.constructor.name, uint8ArrayItem.constructor.name)
     });
 
     it('Uint8Array is resolved correctly', () => {
-      assert.deepEqual(result.uint8Array, [21, 31]);
+      assert.deepEqual(result.uint8ArrayItem, new Uint8Array([21, 31]));
     });
 
     it('promise based Uint8Array is resolved correctly', () => {
