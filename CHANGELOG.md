@@ -1,4 +1,6 @@
 ## Unreleased
+
+## 1.0.7
 - Merged `jjson` and `json` functions
 
 ## 1.0.6
