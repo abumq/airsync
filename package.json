@@ -1,6 +1,6 @@
 {
   "name": "airsync",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Empower asyncronous calls",
   "main": "dist/index.js",
   "files": [
