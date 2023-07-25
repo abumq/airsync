@@ -1,4 +1,6 @@
 ## Unreleased
+
+## 1.0.8
 - Fix: Typed arrays are no longer going to return `Array`
 
 ## 1.0.7
