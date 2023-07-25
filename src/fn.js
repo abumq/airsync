@@ -14,7 +14,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-const exec = (optOrFn, ...args) => {
+/**
+ * Executes specified function in first argument passing in the `args`
+ * to that function. Before executing the function, this function ensures 
+ * the `args` are resolved if they are async functions or promises.
+ * 
+ * @param {*} optOrFn Function or options. If this first argument is options
+ * the second param must be a function. If the first argument is a function
+ * the rest of the arguments must be arguments that function expects.
+ * 
+ * For example we have function `async function queryName(uid) { ... }`
+ * and uid is fetch from async a function `async function getUid(req)`
+ * we use this function as `exec(queryName, getUid(req))`
+ * 
+ * In the above example, `queryName()` is guaranteed to have `uid` instead of
+ * pending promise.
+ * 
+ * @param  {...any} args Function parameters/arguments
+ * @returns Result from the function
+ */
+const exec = async (optOrFn, ...args) => {
+
+  // The options can hold various AirSync specific
+  // options. 
   let options = {};
 
   const func = typeof optOrFn === 'function' ? optOrFn : args[0];
@@ -74,6 +96,16 @@ const exec = (optOrFn, ...args) => {
   });
 };
 
+/**
+ * Creates a function that you can execute. The parameters that function
+ * receive are guaranteed to have resolved parameters instead of pending promises.
+ * 
+ * @see {@link exec()}
+ * 
+ * @param {*} func The function to run
+ * @param {*} opt Any AirSync specific [options](https://github.com/abumq/airsync#options)
+ * @returns 
+ */
 const fn = (func, opt = {}) => {
   if (typeof func !== 'function') {
     throw new TypeError(`${func} is not a function`);
