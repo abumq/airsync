@@ -45,12 +45,12 @@ const NO_RESOLUTION_CLASS_LIST = [
 ];
 
 let SPREAD_COUNTER = 0;
-const SPREAD_KEY_NAME = '__airsync_special_key';
+const SPREAD_KEY_NAME = '__airsync_spread_key';
 
 // if [].from() is available use that otherwise use constructor
 const createArrInstance = (ArrayInstanceType, items) =>
-  typeof ArrayInstanceType.from === 'function' ?
-    ArrayInstanceType.from(items) : new ArrayInstanceType(...items);
+  typeof ArrayInstanceType.from === 'function' ? ArrayInstanceType.from(items)
+    : new ArrayInstanceType(...items);
 
 // do not use Array.isArray as it won't resolve typed arrays
 const isArrayType = o => o && !!ARRAY_TYPES[o.constructor.name];
@@ -65,36 +65,32 @@ const createArray = (arr, depth, currentKey, opts = {}) => {
   }
 
   const ArrayInstanceType = ARRAY_TYPES[arr.constructor.name] || Array;
-  console.log('the array type', opts.arr)
 
   if (opts.name && typeof opts.startTime === 'function') {
     opts.startTime(opts.name, opts.description);
   }
 
-  // Something to note here
-  // Promise.all resolves it to Array instead of typed array
-  // so we do not have a way to resolve correct array type at
-  // top level
-  return Promise.all(createArrInstance(ArrayInstanceType, arr.map(curr => {
-    if (isArrayType(curr)) {
-      return createArray(curr, depth + 1, currentKey);
-    }
+  return Promise.all(arr.map((curr) => {
+      if (isArrayType(curr)) {
+        return createArray(curr, depth + 1, currentKey);
+      }
 
-    const result = json(curr, opts);
-    if (opts.name && typeof opts.endTime === 'function') {
-      opts.endTime(opts.name);
-    }
-    return result;
-  })))
-  .catch(error => {
-    if (opts.name && typeof opts.endTime === 'function') {
-      opts.endTime(opts.name);
-    }
-    if (error instanceof Error) {
-      throw error;
-    }
-    throw new Error(error);
-  })
+      const result = json(curr, opts);
+      if (opts.name && typeof opts.endTime === 'function') {
+        opts.endTime(opts.name);
+      }
+      return result;
+    }))
+    .then(items => createArrInstance(ArrayInstanceType, items))
+    .catch(error => {
+      if (opts.name && typeof opts.endTime === 'function') {
+        opts.endTime(opts.name);
+      }
+      if (error instanceof Error) {
+        throw error;
+      }
+      throw new Error(error);
+    })
 };
 
 const createObject = (obj, depth, currentKey, opts = {}) => {
@@ -116,13 +112,6 @@ const createObject = (obj, depth, currentKey, opts = {}) => {
     const constructorName = obj.constructor.name;
     if (NO_RESOLUTION_CLASS_LIST.some(f => f === constructorName)) {
       if (TYPED_ARRAY_NAMES.some(f => f === constructorName)) {
-        const result = createArray(obj, 1, currentKey, /*opts, */{
-          arr: currentKey === 'uint8ArrayItem' ? constructorName : undefined,
-        });
-        if (currentKey === 'uint8ArrayItem')
-          console.log('constructorName', constructorName, obj)
-
-        return result;
         return createArray(obj, 1, currentKey, opts);
       }
       return obj;
@@ -134,55 +123,32 @@ const createObject = (obj, depth, currentKey, opts = {}) => {
     if (opts.name && typeof opts.startTime === 'function') {
       opts.startTime(opts.name, opts.description);
     }
-    return Promise.all(
-      keys.map(key => createObject(obj[key], depth + 1, key))
-    )
-    .then(async values => {
-      if (opts.name && typeof opts.startTime === 'function') {
-        opts.endTime(opts.name);
-      }
-      let finalResult = {};
-      let idx = 0;
-      for (let key of keys) {
-        const finalValue = await createObject(values[idx], 0, key)
-        if (key.indexOf(SPREAD_KEY_NAME) === 0) {
-          //Object.assign(finalResult, finalValue);
-          finalResult = {
-            ...finalResult,
-            ...finalValue,
-          };
-        } else {
-          //Object.assign(finalResult, { [key] : finalValue });
-          finalResult = {
-            ...finalResult,
-            [key]: finalValue,
-          };
+    return Promise.all(keys.map(key => createObject(obj[key], depth + 1, key)))
+      .then(async (values) => {
+        if (opts.name && typeof opts.startTime === 'function') {
+          opts.endTime(opts.name);
         }
-        idx++;
-      }
-      return finalResult;
-      return keys.reduce((accum, key, idx) => {
-        if (key.indexOf(SPREAD_KEY_NAME) === 0) {
-          return {
-            ...accum,
-            ...values[idx],
-          };
-        };
-        return {
-          ...accum,
-          [key]: values[idx],
-        };
-      }, {})
-    })
-    .catch(error => {
-      if (opts.name && typeof opts.endTime === 'function') {
-        opts.endTime(opts.name);
-      }
-      if (error instanceof Error) {
-        throw error;
-      }
-      throw new Error(error);
-    })
+        const finalResult = {};
+        for (let keyIdx in keys) {
+          const key = keys[keyIdx];
+          const finalValue = await createObject(values[keyIdx], 0, key)
+          if (key.indexOf(SPREAD_KEY_NAME) === 0) {
+            Object.assign(finalResult, finalValue);
+          } else {
+            Object.assign(finalResult, { [key] : finalValue });
+          }
+        }
+        return finalResult;
+      })
+      .catch(error => {
+        if (opts.name && typeof opts.endTime === 'function') {
+          opts.endTime(opts.name);
+        }
+        if (error instanceof Error) {
+          throw error;
+        }
+        throw new Error(error);
+      })
   }
   return obj;
 };

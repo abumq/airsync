@@ -30,8 +30,10 @@ describe('Simple values are resolved correctly', () => {
   describe('Simple Object & Array', async () => {
     const theDate = new Date();
 
+    const getTypedNumb = async () => Uint8Array.from([33])[0];
+
     const result = await airsync.json({
-      arr: [1,2,3],
+      arr: [1,2,3,getTypedNumb()],
       arr2: new Array(1,2,3),
       obj: new Object({ 1: 'one' }),
       date: theDate,
@@ -40,7 +42,7 @@ describe('Simple values are resolved correctly', () => {
     });
 
     it('array is resolved correctly', () => {
-      assert.deepEqual(result.arr, [1,2,3]);
+      assert.deepEqual(result.arr, [1,2,3,33]);
     });
 
     it('array (typed) is resolved correctly', () => {
