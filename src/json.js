@@ -44,7 +44,6 @@ const NO_RESOLUTION_CLASS_LIST = [
   ...TYPED_ARRAY_NAMES,
 ];
 
-let SPREAD_COUNTER = 0;
 const SPREAD_KEY_NAME = '__airsync_spread_key';
 
 // if [].from() is available use that otherwise use constructor
@@ -131,8 +130,10 @@ const createObject = (obj, depth, currentKey, opts = {}) => {
         const finalResult = {};
         for (let keyIdx in keys) {
           const key = keys[keyIdx];
-          const finalValue = await createObject(values[keyIdx], 0, key)
+          const finalValue = await createObject(values[keyIdx], 0, key);
+          
           if (key.indexOf(SPREAD_KEY_NAME) === 0) {
+            console.log(key)
             Object.assign(finalResult, finalValue);
           } else {
             Object.assign(finalResult, { [key] : finalValue });
@@ -177,7 +178,7 @@ const json = (val, opts = {}) => {
 /**
  * Flags the field to be spreaded in resulting JSON.
  */
-const spread = () => SPREAD_KEY_NAME + ++SPREAD_COUNTER;
+const spread = () => SPREAD_KEY_NAME + Math.random();
 
 module.exports.json = json;
 module.exports.spread = spread;

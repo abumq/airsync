@@ -11,7 +11,7 @@ describe('When we have JSON with spread()', async () => {
     const person = queryPerson();
     const profile = queryProfile(person);
 
-    const raceTest = () => {
+    const raceTest = async () => {
       const obj = {};
       for (let i = 0; i <= RACE_NUMBERS; ++i) {
         obj[`item-${i}`] = airsync.json({
@@ -41,14 +41,14 @@ describe('When we have JSON with spread()', async () => {
     assert.equal(props.id, 1);
   });
 
-  it('No race condition', () => {
+  it('No a lot of spreads', () => {
     for (let i = 0; i <= RACE_NUMBERS; ++i) {
       const raceItem = props[`item-${i}`];
-      assert.equal(raceItem.name, 'John', `Race condition test - number ${i} name failed`);
-      assert.equal(raceItem.age, 85, `Race condition test - number ${i} age failed`);
-      assert.equal(raceItem.height, 173, `Race condition test - number ${i} height failed`);
-      assert.equal(raceItem.weight, 70, `Race condition test - number ${i} weight failed`);
-      assert.equal(raceItem.id, 1, `Race condition test - number ${i} id failed`);
+      assert.equal(raceItem.name, 'John', `a lot of spreads test - number ${i} name failed`);
+      assert.equal(raceItem.age, 85, `a lot of spreads test - number ${i} age failed`);
+      assert.equal(raceItem.height, 173, `a lot of spreads test - number ${i} height failed`);
+      assert.equal(raceItem.weight, 70, `a lot of spreads test - number ${i} weight failed`);
+      assert.equal(raceItem.id, 1, `a lot of spreads test - number ${i} id failed`);
     }
   });
 
@@ -59,4 +59,21 @@ describe('When we have JSON with spread()', async () => {
     });
   });
 });
+
+describe('Test collision for spread key', () => {
+  const TEST_COUNT = 10000;
+  const LOG_FREQ = 1000;
+  const list = [];
+  
+  it(`Ensure no spread key is same when produced ${TEST_COUNT} times`, () => {
+    for (let i = 1; i <= TEST_COUNT; ++i) {
+      const r = airsync.spread();
+      if (i % LOG_FREQ === 0) console.log('No collion so far ', i)
+      if (list.indexOf(r) > -1) {
+        assert.fail(`Spread key collided at index ${i} (${r})`)
+      }
+      list.push(r);
+    }
+  })
+})
 

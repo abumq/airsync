@@ -1,7 +1,7 @@
 const assert = require('assert');
-const { json } = require('../src');
+const { json, spread } = require('../src');
 
-describe('When we have JSON with deep promiss', async () => {
+describe('When we have JSON with deep promise', async () => {
   const item = async () => 1
   const jsonItem = () => json({
     result: item()
@@ -20,6 +20,10 @@ describe('When we have JSON with deep promiss', async () => {
       }
     }
   }
+  const getMe = async () => ({ name: 'John' });
+  const getFather = async () => ({ name: 'Paul' });
+  const getGrandfather = async () => ({ name: 'Leaf' });
+  
   const produce = async () => {
     return json({
       depth1_1: item(),
@@ -32,7 +36,17 @@ describe('When we have JSON with deep promiss', async () => {
       depth1_4: jsonItem(),
       depth1_5: jsonItemAsync(),
       depth1_6: itemAsync(),
-
+      data: {
+        user: {
+          [spread()]: getMe(),
+          father: {
+            [spread()]: getFather(),
+            grandfather: {
+              [spread()]: getGrandfather(),
+            }
+          },
+        },
+      },
     })
   }
   const result = await produce();
