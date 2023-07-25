@@ -1,7 +1,7 @@
 const assert = require('assert');
 const airsync = require('../src');
 
-describe('Test fnjson()', () => {
+describe('Test fn with json like params', () => {
 
   describe('Given a sync function', () => {
     const myfn = ({ p1, p2 }) => `result => ${p1} & ${p2}`;
@@ -15,7 +15,7 @@ describe('Test fnjson()', () => {
     })
 
     describe('When converted to async', () => {
-      const myfnAsync = airsync.fnjson(myfn);
+      const myfnAsync = airsync.fn(myfn);
 
       it('Returns same result without promises', async () => {
         assert.equal(await myfnAsync({ p1: 'abumq', p2: 'Majid Q.' }), 'result => abumq & Majid Q.');

@@ -198,14 +198,6 @@ const result = await getDetail(getAge());
 
 Try it on [RunKit](https://npm.runkit.com/airsync)
 
-```javascript
-const getName = ({ firstName, lastName }) => `${firstName} ${lastName}`;
-
-const getNameSync = fnjson(getName);
-```
-
-Now if you pass in JSON with unresolved promises to the function, it would be correctly passed in to `getName` function
-
 # Misc Features
 
 ## Options

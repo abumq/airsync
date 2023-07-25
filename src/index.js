@@ -17,15 +17,17 @@
 const { fn, exec, fnExport } = require('./fn');
 const { json, spread } = require('./json');
 
+const fnjson = (theSyncFunc, opts = {}) => fn(async (obj, ...anythingElse) => theSyncFunc(await json(obj), ...anythingElse), opts);
+
 // default export
-module.exports = fn;
+module.exports = fnjson;
 
 // name exports from fn
 module.exports.fnExport = fnExport;
 module.exports.exec = exec;
-module.exports.fnjson = (theSyncFunc, opts = {}) => fn(async (obj, ...anythingElse) => theSyncFunc(await json(obj), ...anythingElse), opts);
+module.exports.fnjson = fnjson;
 
-module.exports.fn = module.exports.fnjson;
+module.exports.fn = fnjson;
 
 // name exports from json
 module.exports.json = json;
