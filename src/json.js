@@ -133,7 +133,6 @@ const createObject = (obj, depth, currentKey, opts = {}) => {
           const finalValue = await createObject(values[keyIdx], 0, key);
           
           if (key.indexOf(SPREAD_KEY_NAME) === 0) {
-            console.log(key)
             Object.assign(finalResult, finalValue);
           } else {
             Object.assign(finalResult, { [key] : finalValue });

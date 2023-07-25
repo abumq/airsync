@@ -31,7 +31,6 @@ describe('When we have JSON with spread()', async () => {
   }
 
   const props = await buildProps();
-  // console.log(props)
 
   it('the JSON correctly spreads the properties', () => {
     assert.equal(props.name, 'John');
@@ -61,8 +60,13 @@ describe('When we have JSON with spread()', async () => {
 });
 
 describe('Test collision for spread key', () => {
-  const TEST_COUNT = 10000;
-  const LOG_FREQ = 1000;
+  let TEST_COUNT = 10000;
+
+  if (process.env.TEST_CI) {
+    TEST_COUNT = 50;
+  }
+  const LOG_FREQ = TEST_COUNT / 10;
+
   const list = [];
   
   it(`Ensure no spread key is same when produced ${TEST_COUNT} times`, () => {

@@ -1,8 +1,6 @@
 const assert = require('assert');
 const airsync = require('../src');
 
-const p = async v => v;
-
 describe('Typed arrays are resolved correctly', () => {
 
   describe('Uint8Array', async () => {

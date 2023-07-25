@@ -1,5 +1,6 @@
 ## Unreleased
 - Control collision and race-condition for spread keys
+- Merged `fnjson` and `fn` functionalities
 
 ## 1.0.8
 - Fix: Typed arrays are no longer going to return `Array`

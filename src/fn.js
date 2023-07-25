@@ -80,7 +80,7 @@ const fn = (func, opt = {}) => {
   }
   const finalFunc = (...args) => exec(opt, func, ...args);
   finalFunc._isAirsync = true;
-  finalFunc._airsyncOptions = opt;
+  finalFunc._airsyncOptions = opt || {};
   finalFunc.setOptions = ({ startTime, endTime, debug, name, description }) => {
     // we use destructured option instead of Object.keys in params for performance
     finalFunc._airsyncOptions.endTime = endTime || finalFunc._airsyncOptions.endTime;

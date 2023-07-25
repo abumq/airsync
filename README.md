@@ -198,13 +198,6 @@ const result = await getDetail(getAge());
 
 Try it on [RunKit](https://npm.runkit.com/airsync)
 
-## Function with JSON
-`fn()` is good when the function takes normal parameters, e.g, `myfn(param1, param2)` but this will not work if we have json based parameters, e.g, `myfn({ param1: 1, param2: Promise.resolve(2) })`
-
-For this `fnjson()` was added.
-
-Simply pass in function in to this function.
-
 ```javascript
 const getName = ({ firstName, lastName }) => `${firstName} ${lastName}`;
 

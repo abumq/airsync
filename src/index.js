@@ -21,10 +21,11 @@ const { json, spread } = require('./json');
 module.exports = fn;
 
 // name exports from fn
-module.exports.fn = fn;
 module.exports.fnExport = fnExport;
 module.exports.exec = exec;
-module.exports.fnjson = (theSyncFunc) => fn(async (obj, ...anythingElse) => theSyncFunc(await json(obj), ...anythingElse));
+module.exports.fnjson = (theSyncFunc, opts = {}) => fn(async (obj, ...anythingElse) => theSyncFunc(await json(obj), ...anythingElse), opts);
+
+module.exports.fn = module.exports.fnjson;
 
 // name exports from json
 module.exports.json = json;
