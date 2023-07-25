@@ -1,11 +1,6 @@
 const assert = require('assert');
 const { json } = require('../src');
 
-const logger = {
-  startTime: console.log,
-  endTime: console.log,
-}
-
 describe('When we have JSON with deep promiss', async () => {
   const item = async () => 1
   const jsonItem = () => json({
@@ -38,11 +33,9 @@ describe('When we have JSON with deep promiss', async () => {
       depth1_5: jsonItemAsync(),
       depth1_6: itemAsync(),
 
-    }, { name: 'inner', description: 'start', ...logger })
+    })
   }
   const result = await produce();
-
-  console.log(JSON.stringify(result, null, 2))
 
   it('depth 1 is correctly resolved', () => {
     assert.equal(result.depth1_1, 1);
