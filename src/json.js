@@ -177,7 +177,7 @@ const json = (val, opts = {}) => {
 /**
  * Flags the field to be spreaded in resulting JSON.
  */
-const spread = () => SPREAD_KEY_NAME + Math.random();
+const spread = (uid = '') => SPREAD_KEY_NAME + uid + Math.random();
 
 module.exports.json = json;
 module.exports.spread = spread;
