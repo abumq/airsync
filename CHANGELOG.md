@@ -1,5 +1,11 @@
 ## Unreleased
 
+## 1.0.11
+- Add custom key for `spread()`
+
+## 1.0.10
+- 
+
 ## 1.0.9
 - Control collision and race-condition for spread keys
 - Merged `fnjson` and `fn` functionalities
