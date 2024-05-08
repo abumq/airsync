@@ -4,21 +4,20 @@
   "description": "Empower asyncronous calls",
   "main": "dist/index.js",
   "files": [
-    "dist/index.js",
-    "dist/fn.js",
-    "dist/json.js"
+    "dist/*"
   ],
   "devDependencies": {
     "babel-minify": "^0.5.1",
     "lodash.get": "^4.4.2",
     "mocha": "^10.2.0",
-    "rimraf": "^3.0.2"
+    "rimraf": "^3.0.2",
+    "typescript": "^5.4.5"
   },
   "scripts": {
     "test:ci": "TEST_CI=true mocha tests",
     "test": "mocha tests",
     "tdd": "mocha tests --watch",
-    "build": "rimraf dist && mkdir dist && minify src -d dist",
+    "build": "tsc && rimraf dist && mkdir dist && minify build -d dist && cp build/*.ts dist",
     "prepublish": "npm run build"
   },
   "keywords": [
