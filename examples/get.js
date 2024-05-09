@@ -1,4 +1,8 @@
-const { get } = require('../src');
+const lodashGet = require('lodash.get');
+
+// get value from the object using lodash.get
+// when object is resolved
+const get = (objOrPromise, path, defaultVal, options = {}) => fn(o => lodashGet(o, path) || defaultVal, options)(objOrPromise)
 
 const getProfile = async (uid) => ({
   name: 'John_' + uid,
