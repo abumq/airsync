@@ -25,7 +25,7 @@ describe('When we have JSON with deep promise', async () => {
   const getGrandfather = async () => ({ name: 'Leaf' });
   
   const produce = async () => {
-    return json({
+    return resolve({
       depth1_1: item(),
       depth1_2: {
         result: item(),
