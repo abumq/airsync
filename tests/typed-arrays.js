@@ -5,7 +5,7 @@ describe('Typed arrays are resolved correctly', () => {
 
   describe('Uint8Array', async () => {
     const uint8ArrayItem = new Uint8Array([21, 31]);
-    const result = await airsync.json({
+    const result = await airsync.resolve({
       uint8ArrayItem,
       promiseBasedUint8Array: (async () => new Uint8Array([21, 31]))(),
     });

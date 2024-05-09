@@ -1,7 +1,7 @@
-const { fnExport, json } = require('../src');
-const originalExamples = require('./example-utils');
+const { exportFns, resolve } = require('../src');
+const originalExamples = require('./__example-utils');
 
-const exampleUtils = fnExport(originalExamples)
+const exampleUtils = exportFns(originalExamples)
 
 const generateObj = (err = false) => {
   const userInfo = exampleUtils.queryUserInfo();
@@ -12,7 +12,7 @@ const generateObj = (err = false) => {
   const withoutErr = err ? exampleUtils.thisFnThrows()
     .catch(err => console.log('This was thrown to show you how to catch errors', err.message)) : null;
 
-  return json({
+  return resolve({
     title: 'example',
     account: accountInfo,
     systemInfo,
@@ -25,6 +25,22 @@ const generateObj = (err = false) => {
   });
 };
 
-generateObj().then(result => {
-  console.log(result);
-});
+generateObj().then(console.log);
+
+/*
+output:
+
+{
+  title: 'example',
+  account: {
+    preferences: 32,
+    permissions: 7,
+    user: { name: 'John', dob: '25/03/1986' }
+  },
+  systemInfo: { load: 14 },
+  simple: 'abc',
+  config: { url: 'https://amrayn.com', sender: 'web' },
+  withoutErr: null,
+  exc: [ 1, 2, 123 ]
+}
+*/

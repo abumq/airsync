@@ -11,7 +11,7 @@ describe('JSON with options', () => {
       def: { started: false, ended: false },
     };
 
-    await airsync.json({
+    await airsync.resolve({
       person: queryPerson(),
     }, {
       name: 'abc',
@@ -32,7 +32,7 @@ describe('JSON with options', () => {
       def: { started: false, ended: false },
     };
 
-    const result = await airsync.json([
+    const result = await airsync.resolve([
       queryPerson(),
     ], {
       name: 'def',
@@ -63,7 +63,7 @@ describe('JSON with options', () => {
       def: { started: false, ended: false },
     };
 
-    const result = await airsync.json({
+    const result = await airsync.resolve({
       people: [queryPerson()],
       list: [1,2,3],
       simple: 'abcdef',

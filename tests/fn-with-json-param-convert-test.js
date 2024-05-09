@@ -15,7 +15,7 @@ describe('Test fn with json like params', () => {
     })
 
     describe('When converted to async', () => {
-      const myfnAsync = airsync.fn(myfn);
+      const myfnAsync = airsync.convertFn(myfn);
 
       it('Returns same result without promises', async () => {
         assert.equal(await myfnAsync({ p1: 'abumq', p2: 'Majid Q.' }), 'result => abumq & Majid Q.');

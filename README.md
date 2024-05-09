@@ -32,14 +32,14 @@ You can use any of these methods to use airsync in your application
 
 ```javascript
 // using modules
-import { fn, json } from "airsync";
+import { convertFn, resolve } from "airsync";
 
 // or using package
 import airsync from "airsync";
 
 // using require
 
-const { fn, json } = require("airsync");
+const { convertFn, resolve } = require("airsync");
 
 const airsync = require("airsync");
 ```
@@ -87,9 +87,9 @@ const props = {
 
 You can use AirSync to solve this issue
 ```javascript
-const { json } = require("airsync");
+const { resolve } = require("airsync");
 
-const props = json({
+const props = resolve({
   age: calcAge(),
 })
 ```
@@ -113,7 +113,7 @@ and you want to create JSON like:
 
 the following **WILL NOT** create desired result
 ```js
-const result = await json({
+const result = await resolve({
   keyId: encodeKey(),
 })
 ```
@@ -121,7 +121,7 @@ const result = await json({
 what about this?
 
 ```js
-const result = await json({
+const result = await resolve({
   ...encodeKey(),
 })
 ```
@@ -130,7 +130,7 @@ This is also not going to work because `encodeKey()` is an async function.
 ### Existing Solution
 We have a solution
 ```js
-const result = await json({
+const result = await resolve({
   ...await encodeKey(),
 })
 ```
@@ -142,9 +142,9 @@ All of a sudden, our code has to wait for `encodeKey` to finish, and if the JSON
 Luckily, we have `spread()`
 
 ```js
-const { spread, json } = require('airsync');
+const { spread, resolve } = require('airsync');
 
-const result = await json({
+const result = await resolve({
   [spread()]: encodeKey(),
 })
 ```
@@ -188,10 +188,13 @@ or you can extract out it to variable.
 ## AirSync Solution
 
 ```javascript
-const { fn } = require("airsync"); // or you can import using const airsync = require('airsync') and use airsync.fn(...)
+const { convertFn } = require("airsync");
+// or you can import using 
+// const airsync = require('airsync') 
+// and use airsync.convertFn(...)
 
 const getAge = async () => 123;
-const getDetail = fn(async (age) => `The age is ${age}`); // notice the wrap around "fn"
+const getDetail = convertFn(async (age) => `The age is ${age}`); // notice the wrap around "convertFn"
 
 const result = await getDetail(getAge());
 ```
@@ -202,12 +205,12 @@ Try it on [RunKit](https://npm.runkit.com/airsync)
 
 ## Options
 
-If the first parameter is an object for the `fn()`, that object is used for setting up the options.
+If the first parameter is an object for the `convertFn()`, that object is used for setting up the options.
 
 For example:
 
 ```javascript
-const getNumb = fn(() => 123, {
+const getNumb = convertFn(() => 123, {
   startTime: res.startTime,
   endTime: res.endTime,
 });
@@ -240,7 +243,7 @@ Following are the possible options
 
 ## Bulk Export (Advanced)
 
-Converting existing exports to crafted functions is easy, either using `fn` for each function which can be cumbersome depending on number of functions; or you can simply convert the whole object using a helper function `fnExport`.
+Converting existing exports to crafted functions is easy, either using `convertFn` for each function which can be cumbersome depending on number of functions; or you can simply convert the whole object using a helper function `exportFns`.
 
 Let's say you have:
 
@@ -254,21 +257,21 @@ module.exports = {
 };
 ```
 
-Just use `fnExport` when exporting
+Just use `exportFns` when exporting
 
 ```javascript
-const { fnExport } = require("airsync");
+const { exportFns } = require("airsync");
 
 const function1 = () => {};
 const function2 = () => {};
 
-module.exports = fnExport({
+module.exports = exportFns({
   function1,
   function2,
 });
 ```
 
-Alternatively, you can do it when importing like in example of `/examples/json.js`. Doing it multiple times does not harm.
+Alternatively, you can do it when importing like in example of `/examples/resolve.js`. Doing it multiple times does not harm.
 
 ## Get Object Value
 
@@ -277,14 +280,10 @@ If you have a function that returns an object, and you want to grab just one spe
 This function used to be part of library. Since `1.0.4`, the `get()` function is removed (see CHANGELOG). However, if you need it, you can add it as utility in your project.
 
 ```js
-const lodashGet = require('lodash.get');
-
-// get value from the object using lodash.get
-// when object is resolved
-const get = (objOrPromise, path, defaultVal, options = {}) => fn(o => lodashGet(o, path) || defaultVal, options)(objOrPromise)
+const { get } = require('airsync/get');
 ```
 
-You need to add dependency to [lodash.get](https://www.npmjs.com/package/lodash.get) if you need it
+This function has peer dependency of [lodash.get](https://www.npmjs.com/package/lodash.get)
 
 ```javascript
 

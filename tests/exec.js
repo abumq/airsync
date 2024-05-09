@@ -1,19 +1,19 @@
 const assert = require('assert');
-const airsync = require('../src');
+const { convertFn } = require('../src');
+const { exec } = require('../src/fn');
 
 const queryUsername = async (title = '') => `${title}john`;
-const snooze = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 describe('Using exec()', () => {
   describe('without parameter', () => {
     it('without parameter should return correct result', async () => {
-      assert.equal(await airsync.exec(queryUsername), 'john');
+      assert.equal(await exec(queryUsername), 'john');
     });
 
     it('without parameter timer works', async () => {
       const timerResult = { start: false, end: false };
 
-      const name = await airsync.exec({
+      const name = await exec({
         startTime: () => timerResult.start = true,
         endTime: () => timerResult.end = true,
       }, queryUsername);
@@ -26,13 +26,13 @@ describe('Using exec()', () => {
 
   describe('with parameter', () => {
     it('with parameter should return correct result', async () => {
-      assert.equal(await airsync.exec(queryUsername, 'mr. '), 'mr. john');
+      assert.equal(await exec(queryUsername, 'mr. '), 'mr. john');
     });
 
     it('with parameter timer works', async () => {
       const timerResult = { start: false, end: false };
 
-      const name = await airsync.exec({
+      const name = await exec({
         startTime: () => timerResult.start = true,
         endTime: () => timerResult.end = true,
       }, queryUsername, 'mr. ');
@@ -46,20 +46,20 @@ describe('Using exec()', () => {
       const queryTitle = async () => 'Mr. ';
 
       const userTitle = queryTitle();
-      assert.equal(await airsync.exec(queryUsername, userTitle), 'Mr. john');
+      assert.equal(await exec(queryUsername, userTitle), 'Mr. john');
     });
   });
 });
 
-describe('Using airsync.fn()', () => {
+describe('Using airsync.convertFn()', () => {
 
   // has options
-  const newQueryUsername = airsync.fn(queryUsername, {
+  const newQueryUsername = convertFn(queryUsername, {
     name: 'newQueryUsername',
   });
 
   // no options
-  const rawQueryUsername = airsync.fn(queryUsername);
+  const rawQueryUsername = convertFn(queryUsername);
 
   describe('without parameter', () => {
     it('without parameter should return correct result', async () => {
@@ -107,7 +107,7 @@ describe('Using airsync.fn()', () => {
     it('with parameter timer works', async () => {
       const timerResult = { start: false, end: false };
 
-      const name = await airsync.exec({
+      const name = await exec({
         startTime: () => timerResult.start = true,
         endTime: () => timerResult.end = true,
       }, queryUsername, 'mr. ');
@@ -121,7 +121,7 @@ describe('Using airsync.fn()', () => {
       const queryTitle = async () => 'Mr. ';
 
       const userTitle = queryTitle();
-      assert.equal(await airsync.exec(queryUsername, userTitle), 'Mr. john');
+      assert.equal(await exec(queryUsername, userTitle), 'Mr. john');
     });
   });
 });

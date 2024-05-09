@@ -1,10 +1,7 @@
 const assert = require('assert');
-const lodashGet = require('lodash.get');
-const { fn } = require('../src');
+const { get } = require('../src/get');
 
 const { getResponse } = require('./utils');
-
-const get = (objOrPromise, path, defaultVal, options = {}) => fn(o => lodashGet(o, path) || defaultVal, options)(objOrPromise)
 
 describe('Test get', () => {
   it('Get resolves to correct value', async () => {

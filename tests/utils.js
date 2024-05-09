@@ -29,9 +29,9 @@ const getResponse_ = (doThrow = false) => doThrow ? Promise.reject('Thrown inten
   status: 200,
 });
 
-module.exports.buildPerson = airsync.fn(buildPerson_);
-module.exports.queryPerson = airsync.fn(queryPerson_);
-module.exports.queryProfile = airsync.fn(queryProfile_);
-module.exports.queryDetails = airsync.fn(queryDetails_);
-module.exports.queryCompany = airsync.fn(queryCompany_);
-module.exports.getResponse = airsync.fn(getResponse_);
+module.exports.buildPerson = airsync.convertFn(buildPerson_);
+module.exports.queryPerson = airsync.convertFn(queryPerson_);
+module.exports.queryProfile = airsync.convertFn(queryProfile_);
+module.exports.queryDetails = airsync.convertFn(queryDetails_);
+module.exports.queryCompany = airsync.convertFn(queryCompany_);
+module.exports.getResponse = airsync.convertFn(getResponse_);

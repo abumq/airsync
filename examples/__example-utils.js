@@ -46,6 +46,19 @@ const queryConfig = (sender) => new Promise(async (resolve) => {
   });
 });
 
+// runs a function
+const runExample = (f) => {
+  const start = Date.now()
+  f().then((result) => {
+    const timeTaken = (Date.now() - start)
+    const timeTakenEst = Math.round(timeTaken / 50) * 50
+    console.log(`---- ${f.name}() ---`)
+    console.log(`Time to finish: ${timeTakenEst}ms`)
+    console.log(result)
+    console.log('\n')
+  })
+}
+
 module.exports = {
   querySystemInfo,
   queryUserInfo,
@@ -54,4 +67,5 @@ module.exports = {
   queryConfig,
   simple,
   snooze,
+  runExample,
 };

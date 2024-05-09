@@ -14,7 +14,7 @@ describe('Objects resolution', async () => {
     const profile = queryProfile(person);
     const company = queryCompany();
 
-    return airsync.json({
+    return airsync.resolve({
       bio: person,
       details,
       profile: {
@@ -71,7 +71,7 @@ describe('Array resolution', async () => {
       weight: 63,
     });
 
-    return airsync.json([
+    return airsync.resolve([
       mike,
       john,
     ]);
@@ -111,7 +111,7 @@ describe('Inner array object resolution', async () => {
       weight: 63,
     });
 
-    return airsync.json({
+    return airsync.resolve({
       timeTaken: 1.2,
       list: [
         mike,

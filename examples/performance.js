@@ -1,4 +1,5 @@
 const airsync = require('../src')
+const { runExample } = require('./__example-utils')
 const snooze = ms => new Promise(resolve => setTimeout(resolve, ms))
 
 const enableLog = false
@@ -10,26 +11,13 @@ const getName = async (first, last = '') => {
   await snooze(50)
   return `${first}${last ? ` ${last}` : ''}`
 }
-const getNameAir = airsync.fn(getName) // specially crafted function definition
+const getNameAir = airsync.convertFn(getName) // specially crafted function definition
 
 // takes ~150ms to return result
 const queryName = async (n) => {
   log('queryName()', n)
   await snooze(150)
   return n
-}
-
-// runs a function
-const run = (f) => {
-  const start = Date.now()
-  f().then((result) => {
-    const timeTaken = (Date.now() - start)
-    const timeTakenEst = Math.round(timeTaken / 50) * 50
-    console.log(`---- ${f.name}() ---`)
-    console.log(`Time to finish: ${timeTakenEst}ms`)
-    console.log(result)
-    console.log('\n')
-  })
 }
 
 const run1 = async () => ({
@@ -42,7 +30,7 @@ const run2 = async () => ({
   minister: await getName('Mari'),
 })
 
-const run3 = async () => airsync.json({ // using airsync
+const run3 = async () => airsync.resolve({ // using airsync
   king: getName('Mansa', queryName('Musa')),
   minister: getName( queryName('Mari'), queryName('Djata')),
 })
@@ -58,15 +46,55 @@ const run5 = async () => ({
   minister: await getNameAir('Mari'),
 })
 
-const run6 = async () => airsync.json({ // using airsync
+const run6 = async () => airsync.resolve({ // using airsync
   king: getNameAir('Mansa', queryName('Musa')),
   minister: getNameAir( queryName('Mari'), queryName('Djata')),
 })
 
-run(run1)
-run(run2)
-run(run3) // fastest because of airsync
+runExample(run1) // 100ms
+runExample(run2) // 100ms
+runExample(run3) // 50ms
 
-run(run4)
-run(run5)
-run(run6)
+runExample(run4) // 200ms
+runExample(run5) // 100ms
+runExample(run6) // 400ms
+
+
+/*
+ output
+ ------
+ ---- run3() ---
+Time to finish: 50ms
+{
+  king: 'Mansa [object Promise]',
+  minister: '[object Promise] [object Promise]'
+}
+
+
+---- run1() ---
+Time to finish: 100ms
+{
+  king: 'Mansa [object Promise]',
+  minister: '[object Promise] [object Promise]'
+}
+
+
+---- run2() ---
+Time to finish: 100ms
+{ king: 'Mansa', minister: 'Mari' }
+
+
+---- run5() ---
+Time to finish: 100ms
+{ king: 'Mansa', minister: 'Mari' }
+
+
+---- run6() ---
+Time to finish: 200ms
+{ king: 'Mansa Musa', minister: 'Mari Djata' }
+
+
+---- run4() ---
+Time to finish: 400ms
+{ king: 'Mansa Musa', minister: 'Mari Djata' } 
+ */

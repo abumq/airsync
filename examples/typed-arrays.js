@@ -1,14 +1,20 @@
-const { json } = require('../src');
+const { resolve } = require('../src');
 
 (async () => {
-  console.clear()
   const uint8ArrayItem = new Uint8Array([21, 31])
-  const resultObj = await json({
+  const resultObj = await resolve({
     uint8ArrayItem,
   })
-  const resultArr = await json(
-    uint8ArrayItem
-  )
+  const resultArr = await resolve(uint8ArrayItem)
   console.log(resultArr)
   console.log(resultObj)
 })()
+
+/*
+output
+------
+
+Uint8Array(2) [ 21, 31 ]
+{ uint8ArrayItem: Uint8Array(2) [ 21, 31 ] }
+
+*/

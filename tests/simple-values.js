@@ -3,7 +3,7 @@ const airsync = require('../src');
 
 describe('Simple values are resolved correctly', () => {
   describe('Simple premitive', async () => {
-    const result = await airsync.json({
+    const result = await airsync.resolve({
       num: 123,
       str: 'simple',
       fl: 1.2,
@@ -32,7 +32,7 @@ describe('Simple values are resolved correctly', () => {
 
     const getTypedNumb = async () => Uint8Array.from([33])[0];
 
-    const result = await airsync.json({
+    const result = await airsync.resolve({
       arr: [1,2,3,getTypedNumb()],
       arr2: new Array(1,2,3),
       obj: new Object({ 1: 'one' }),
@@ -71,7 +71,7 @@ describe('Simple values are resolved correctly', () => {
     contacts.set('Jessie', { phone: "213-555-1234", address: "123 N 1st Ave" });
     contacts.set('Hilary', { phone: "213-555-1235", address: "124 N 1st Ave" });
 
-    const result = await airsync.json({
+    const result = await airsync.resolve({
       set: new Set([3, 1, 2, 3]),
       map: contacts,
     });

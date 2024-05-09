@@ -1,11 +1,14 @@
 {
   "name": "airsync",
   "version": "1.0.12",
-  "description": "Empower asyncronous calls",
+  "description": "⚡ Streamline your code by replacing multiple `await` calls with a single `await` using ༄AirSync, and fully leverage the power of asynchronous, non-blocking I/O.",
   "main": "dist/index.js",
   "files": [
     "dist/*"
   ],
+  "peerDependencies": {
+    "lodash.get": "^4.4.2"
+  },
   "devDependencies": {
     "babel-minify": "^0.5.1",
     "lodash.get": "^4.4.2",

@@ -1,5 +1,12 @@
 ## Unreleased
 
+## 2.0.0
+- `json()` is now `resolve()`
+- `fn()` is now `convertFn()`
+- `fnExport` is now `exportFn()`
+- Removed `exec()` in favour of encourging use of `convertFn()` instead
+- `get` added back using `lodash.get` as peer dependency
+
 ## 1.0.11
 - Add custom key for `spread()`
 

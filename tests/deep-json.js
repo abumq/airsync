@@ -1,14 +1,14 @@
 const assert = require('assert');
-const { json, spread } = require('../src');
+const { resolve, spread } = require('../src');
 
 describe('When we have JSON with deep promise', async () => {
   const item = async () => 1
-  const jsonItem = () => json({
+  const jsonItem = () => resolve({
     result: item()
   })
   const jsonItemAsync = async () => {
     return {
-      result: json({
+      result: resolve({
         result: item()
       })
     }
@@ -30,7 +30,7 @@ describe('When we have JSON with deep promise', async () => {
       depth1_2: {
         result: item(),
       },
-      depth1_3: json({
+      depth1_3: resolve({
         result: item(),
       }),
       depth1_4: jsonItem(),

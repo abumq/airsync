@@ -11,17 +11,17 @@ describe('When we have JSON with spread()', async () => {
     const person = queryPerson();
     const profile = queryProfile(person);
 
-    const raceTest = async () => {
+    const raceTest = () => {
       const obj = {};
       for (let i = 0; i <= RACE_NUMBERS; ++i) {
-        obj[`item-${i}`] = airsync.json({
+        obj[`item-${i}`] = airsync.resolve({
           [airsync.spread()]: queryPerson(),
         })
       }
       return obj;
     }
 
-    return airsync.json({
+    return airsync.resolve({
       [airsync.spread()]: person,
       profile: {
         profileDetails: profile,
@@ -38,6 +38,8 @@ describe('When we have JSON with spread()', async () => {
     assert.equal(props.height, 173);
     assert.equal(props.weight, 70);
     assert.equal(props.id, 1);
+    assert.equal(props.profile.profileDetails.height, 'This person is 173 cm tall');
+    assert.equal(props.profile.profileDetails.weight, 'This person is 70 kg in weight');
   });
 
   it('No a lot of spreads', () => {

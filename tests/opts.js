@@ -5,7 +5,7 @@ describe('Options test', () => {
 
   it('Preset options', () => {
     const runStatus = { started: false, finished: false };
-    const myfunc = airsync.fn(async () => 1, {
+    const myfunc = airsync.convertFn(async () => 1, {
       startTime: () => runStatus.started = true,
       endTime: () => runStatus.finished = true,
     });
@@ -23,7 +23,7 @@ describe('Options test', () => {
 
   it('Override options', async () => {
     const runStatus = { started: false, finished: false };
-    const myfunc = airsync.fn(async () => 1, {
+    const myfunc = airsync.convertFn(async () => 1, {
       name: 'myfunc',
       startTime: () => runStatus.started = true,
       endTime: () => runStatus.finished = true,

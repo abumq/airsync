@@ -23,12 +23,11 @@ const fnjson = (theSyncFunc, opts = {}) => fn(async (obj, ...anythingElse) => th
 module.exports = fnjson;
 
 // name exports from fn
-module.exports.fnExport = fnExport;
-module.exports.exec = exec;
+module.exports.exportFns = fnExport;
 module.exports.fnjson = fnjson;
 
-module.exports.fn = fnjson;
+module.exports.convertFn = fnjson;
 
 // name exports from json
-module.exports.json = json;
+module.exports.resolve = json;
 module.exports.spread = spread;
