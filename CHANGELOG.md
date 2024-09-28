@@ -1,5 +1,8 @@
 ## Unreleased
 
+## 2.0.2
+- Added `keyEnd` and `keyStart` in options for more debugging
+
 ## 2.0.0
 - `json()` is now `resolve()`
 - `fn()` is now `convertFn()`

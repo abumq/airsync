@@ -124,19 +124,25 @@ const createObject = (obj, depth, currentKey, opts = {}) => {
     }
     return Promise.all(keys.map(key => createObject(obj[key], depth + 1, key)))
       .then(async (values) => {
-        if (opts.name && typeof opts.startTime === 'function') {
-          opts.endTime(opts.name);
-        }
         const finalResult = {};
         for (let keyIdx in keys) {
           const key = keys[keyIdx];
+          if (opts.name && typeof opts.keyStart === 'function') {
+            opts.keyStart(opts.name, key);
+          }
           const finalValue = await createObject(values[keyIdx], 0, key);
           
+          if (opts.name && typeof opts.keyEnd === 'function') {
+            opts.keyEnd(opts.name, key);
+          }
           if (key.indexOf(SPREAD_KEY_NAME) === 0) {
             Object.assign(finalResult, finalValue);
           } else {
             Object.assign(finalResult, { [key] : finalValue });
           }
+        }
+        if (opts.name && typeof opts.endTime === 'function') {
+          opts.endTime(opts.name);
         }
         return finalResult;
       })
@@ -177,7 +183,7 @@ const json = (val, opts = {}) => {
 /**
  * Flags the field to be spreaded in resulting JSON.
  */
-const spread = (uid = '', rnd = Math.random) => SPREAD_KEY_NAME + uid + rnd();
+const spread = (uid = '', rnd = Math.random) => `${SPREAD_KEY_NAME}::${uid}::${rnd()}`;
 
 module.exports.json = json;
 module.exports.spread = spread;
