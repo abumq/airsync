@@ -1,6 +1,6 @@
 {
   "name": "airsync",
-  "version": "2.0.3",
+  "version": "2.0.6",
   "description": "⚡ Streamline your code by replacing multiple `await` calls with a single `await` using ༄AirSync, and fully leverage the power of asynchronous, non-blocking I/O.",
   "main": "dist/index.js",
   "files": [
