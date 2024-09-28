@@ -111,7 +111,7 @@ const createObject = (obj, depth, currentKey, opts = {}) => {
     const constructorName = obj.constructor.name;
     if (NO_RESOLUTION_CLASS_LIST.some(f => f === constructorName)) {
       if (TYPED_ARRAY_NAMES.some(f => f === constructorName)) {
-        return createArray(obj, 1, currentKey, opts);
+        return createArray(obj, 0, currentKey, opts);
       }
       return obj;
     }
@@ -174,10 +174,10 @@ const json = (val, opts = {}) => {
   }
 
   if (isArrayType(val)) {
-    return createArray(val, 1, '<root array>', opts);
+    return createArray(val, 0, '<root array>', opts);
   }
 
-  return createObject(val, 1, '<root>', opts);
+  return createObject(val, 0, '<root>', opts);
 };
 
 /**
