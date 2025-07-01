@@ -16,6 +16,33 @@
   </a>
 </p>
 
+# What It Does
+AirSync addresses the complexity of handling multiple asynchronous operations in JavaScript. Typically, developers use multiple await statements to resolve promises, which can lead to verbose and less maintainable code. AirSync introduces a `resolve()` function that enables the resolution of an entire object containing promises with a single await. This approach not only streamlines the code but also leverages non-blocking I/O, improving performance.
+
+For instance, instead of writing:
+
+```javascript
+const data = {
+  user: await getUser(),
+  posts: await getPosts(),
+  comments: await getComments(),
+};
+```
+
+With AirSync, you can write:
+
+```javascript
+const data = await resolve({
+  user: getUser(),
+  posts: getPosts(),
+  comments: getComments(),
+});
+```
+
+This method ensures that all promises are initiated concurrently and resolved together, leading to more efficient and cleaner code.
+
+Additionally, AirSync provides utilities like `convertFn()` to adapt existing functions for asynchronous contexts and `exportFns()` to simplify module exports. These tools collectively enhance the developer experience when working with asynchronous operations in Node.js.
+
 # Getting Started
 
 ### Installation
@@ -43,18 +70,6 @@ const { convertFn, resolve } = require("airsync");
 
 const airsync = require("airsync");
 ```
-
-# Introduction
-AirSync is a powerful javascript library that you can use when using `async`.
-
-The easiest way to see the power of this library is to checkout [`performance.js`](https://github.com/abumq/airsync/blob/main/examples/performance.js) file.
-
-AirSync helps you:
-
- * Create JSON from promises without extracting functions or multiple await
- * Convert your existing functions that take promises as parameters, you do not need to wait for promises to fulfil in order to pass them to the function. You can just pass them in as is.
-
-The best part is that AirSync makes your code readable while using full power of [non-blocking event based I/O](https://developers.redhat.com/blog/2016/08/16/why-should-i-use-node-js-the-non-blocking-event-io-framework/) that Node.js is known for.
 
 # 1. JSON
 ### Problem
@@ -306,6 +321,7 @@ const getProfile = async (uid) => ({
 
 ```
 Copyright (c) 2020-present @abumq (Majid Q.)
+Copyright (c) 2020-present Firewebkit
 
 https://github.com/abumq/airsync
 
